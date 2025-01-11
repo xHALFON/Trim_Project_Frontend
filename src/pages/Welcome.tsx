@@ -12,7 +12,6 @@ function Welcome({ setAuth }) {
   const [gender, setGender] = useState<string>('');
   const [error, setError] = useState('');
 
-
   async function signUp(e: React.FormEvent) {
     e.preventDefault(); 
 
@@ -41,15 +40,12 @@ function Welcome({ setAuth }) {
     try{
       const server = process.env.REACT_APP_API_URL;
 
-      await axios.post(`${server}/auth/register`, {
+      const responseRegiser:any = await axios.post(`${server}/auth/register`, {
         username: userName,
         email: Email,
         password: password,
-        gender: gender
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        gender: gender,
+        profileImage: "none"
       });
 
       const responseLogin = await axios.post(`${server}/auth/login`, {
@@ -57,11 +53,17 @@ function Welcome({ setAuth }) {
         password: password,
       });
       Cookies.set("accessToken", responseLogin.data.accessToken, { expires: 1, secure: true });
+      Cookies.set("user_id", responseLogin.data.id, { expires: 1, secure: true });
       setAuth(responseLogin.data.accessToken);
 
     }catch(error){
-      console.log("Error during sign up: " + error);
-      
+      console.log("Error during sign up: " + error.response.data.message);
+      if(error.response.data.message == "Email already exists"){
+        setError("Email already exists.");
+      }
+      if(error.response.data.message == "Username already exists"){
+        setError("Username already exists.");
+      }
     }
   }
 

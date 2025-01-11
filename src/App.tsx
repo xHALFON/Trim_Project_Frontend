@@ -21,17 +21,23 @@ function App() {
       if (token) {
         try{
           const server = process.env.REACT_APP_API_URL;
-          const response = await axios.post(`${server}/auth/payload/${token}`);
+          const response = await axios.post(`${server}/auth/payload/${token}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if(response.data){
             setAuth(token);
           }else{
             setAuth('');
+            Cookies.remove('accessToken');
+            Cookies.remove('user_id');
           }
         }catch(error){
           console.error("Error during payload", error);
         }
       }else{
         setAuth('');
+        Cookies.remove('accessToken');
+        Cookies.remove('user_id');
       }
     }
     setTimeout(() => {
