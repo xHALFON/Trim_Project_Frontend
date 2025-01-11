@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
 
-const NavbarLogin: React.FC = () => {
+const NavbarLogin = ({setAuth}) => {
   const [Email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -11,8 +10,6 @@ const NavbarLogin: React.FC = () => {
     email: "border-black",
     password: "border-black",
   });
-
-  const navigate = useNavigate();
 
   async function Login() {
     const server = process.env.REACT_APP_API_URL;
@@ -23,14 +20,14 @@ const NavbarLogin: React.FC = () => {
       });
       
       Cookies.set("accessToken", response.data.accessToken, { expires: 1, secure: true });
-
+      setAuth(response.data.accessToken)
+      
       setMessage("");
       setBorderColor({
         email: "border-black",
         password: "border-black",
       });
 
-      //navigate("/home");
       
     } catch (error) {
       console.error("Error during login:", error);

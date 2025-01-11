@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUser, FaHome, FaUsers, FaCog, FaSearch } from 'react-icons/fa';  // אייקונים של פרופיל ו-פוסטים
+import { Link } from 'react-router-dom';
 
 export default function NavBar() {
   return (
@@ -22,16 +23,25 @@ export default function NavBar() {
         </div>
 
         {/* צד ימין - פרופיל ופוסטים */}
+        
         <div className="flex space-x-6 text-white">
-          <div className="flex items-center cursor-pointer">
-            <FaHome className="text-2xl" />
-          </div>
-          <div className="flex items-center cursor-pointer">
-            <FaUser className="text-2xl" />
-          </div>
-          <div className="flex items-center cursor-pointer">
-            <FaCog className="text-2xl" />
-          </div>
+          <Link to="/">
+            <div className="flex items-center cursor-pointer">
+              <FaHome className="text-2xl" />
+            </div>
+          </Link>
+
+          <Link to="/profile">
+            <div className="flex items-center cursor-pointer">
+              <FaUser className="text-2xl" />
+            </div>
+          </Link>
+          
+          <Link to="/settings">
+            <div className="flex items-center cursor-pointer">
+              <FaCog className="text-2xl" />
+            </div>
+          </Link>
         </div>
       </div>
     </div>
