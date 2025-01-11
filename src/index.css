@@ -27,9 +27,9 @@ code {
 }
 
 .loading-icon {
-  font-size: 9rem; /* גודל התחלה של ה-T */
+  font-size: 8rem; /* גודל התחלה של ה-T */
   font-weight: bold;
-  color: #3498db; /* צבע ה-T */
+  color: #174463; /* צבע ה-T */
   animation: pulse 2s infinite; /* הפעלת האנימציה */
 }
 
