@@ -20,6 +20,9 @@ const NavbarLogin = ({setAuth}) => {
       });
       
       Cookies.set("accessToken", response.data.accessToken, { expires: 1, secure: true });
+      Cookies.set("user_id", response.data.id, { expires: 1, secure: true });
+      console.log(Cookies.get("user_id"));
+      
       setAuth(response.data.accessToken)
       
       setMessage("");
