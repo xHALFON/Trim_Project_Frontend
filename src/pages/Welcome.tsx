@@ -45,7 +45,8 @@ function Welcome({ setAuth }) {
         email: Email,
         password: password,
         gender: gender,
-        profileImage: "none"
+        profileImage: "none",
+        profileImageTop: "none"
       });
 
       const responseLogin = await axios.post(`${server}/auth/login`, {
