@@ -20,6 +20,14 @@ interface Post {
   senderName: string;
 }
 
+interface Comment {
+    id: any;
+    content: string;
+    sender: string;
+    senderImg: string;
+    senderName: string;
+}
+
 export default function Profile({ setAuth }) {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -35,6 +43,59 @@ export default function Profile({ setAuth }) {
   const [editImage, setEditImage] = useState(null);
   const [editImageName, setEditImageName] = useState('');
 
+  const [postComments, setPostComments] = useState<Comment[]>([]);
+  const [commentModal, setCommentModal] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [commentContent, setCommentContent] = useState('');
+  const toggleCommentModal = (postId: string) => {
+    setSelectedPostId(postId);
+    setCommentModal(!commentModal);
+  };
+
+  const handleRemoveComment = async (commentId) =>{
+    const server = process.env.REACT_APP_API_URL;
+    try{
+        const response = await axios.delete(`${server}/comments/${commentId}`,
+        {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            },
+        });
+    }catch(err){
+        console.log("error with fetching comments: " + err);
+    }
+  }
+  const handleSendComment = async (postId) => {
+    const server = process.env.REACT_APP_API_URL;
+    try{
+        const response = await axios.post(`${server}/comments`,{
+            sender: Cookies.get("user_id"),
+            content: commentContent,
+            postId: postId,
+        },
+        {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            },
+        });
+        setCommentContent('')
+    }catch(err){
+        console.log("error with fetching comments: " + err);
+    }
+  }
+  const fetchCommentsFromPost = async (postId) =>{
+    const server = process.env.REACT_APP_API_URL;
+    try{
+    const response = await axios.get(`${server}/comments/${postId}`,{
+        headers: {
+          Authorization: `Bearer ${Cookies.get("accessToken")}`,
+        },
+      });
+      setPostComments(response.data)
+    }catch(err){
+        console.log("error with fetching comments: " + err);
+    }
+  }
   const handleLike = async (postId) =>{
     try {
         if (isLoading) return; // מניעת בקשות מרובות בו-זמנית
@@ -310,9 +371,14 @@ export default function Profile({ setAuth }) {
                           </div>
                         )}
                         <div className="flex justify-around items-center mt-4">
-                          <button className="text-blue-500 hover:text-blue-700" 
-                          style={{fontWeight: post.Likes.includes(Cookies.get("user_id")) ? 'bold' : 600}} onClick={()=>{handleLike(post.id)}}>👍 Like {post.numLikes}</button>
-                          <button className="text-blue-500 hover:text-blue-700 font-semibold">💬 Comment</button>
+                          <div className='w-1/2'>
+                            <button className="text-blue-500 hover:text-blue-700" 
+                            style={{fontWeight: post.Likes.includes(Cookies.get("user_id")) ? 'bold' : 600}} onClick={()=>{handleLike(post.id)}}>{post.Likes.includes(Cookies.get("user_id")) ? '❤️ Unlike' : '🤍 Like'} {post.numLikes}</button>
+                          </div>
+                          <div className='w-1/2'>
+                            <button className="text-blue-500 hover:text-blue-700 font-semibold" 
+                            onClick={() => toggleCommentModal(post.id.toString())}>💬 Comment</button>
+                          </div>
                         </div>
                       </li>
                     );
@@ -406,6 +472,90 @@ export default function Profile({ setAuth }) {
                             Save
                         </button>
                     </div>
+                </div>
+            </div>
+        )}
+        {commentModal && selectedPostId && (
+            <div
+                className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+                onClick={() => setCommentModal(false)}>
+                <div
+                className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-y-auto relative"
+                onClick={(e) => e.stopPropagation()} >
+                <button
+                    onClick={() => setCommentModal(false)}
+                    className="absolute top-7 right-12 text-xl text-gray-600 hover:text-gray-900 focus:outline-none">
+                    <span className="text-5xl">&times;</span>
+                </button>
+                {posts
+                    .filter(post => post.id.toString() === selectedPostId)
+                    .map(post => {
+                    const server = process.env.REACT_APP_API_URL;
+                    fetchCommentsFromPost(post.id);
+                    return (
+                        <div className="bg-gray-100 p-4 rounded-md shadow-md text-gray-800">
+                            <div className="flex justify-between mb-4">
+                                <div className="flex items-center">
+                                <img
+                                    src={post.senderImg === 'none' ? avatar : `${server}/uploads/${post.senderImg}`}
+                                    alt="Sender"
+                                    className="w-11 h-11 rounded-full mr-4"
+                                />
+                                <h3 className="text-lg font-bold">{post.senderName || 'Unknown Sender'}</h3>
+                                </div>
+                            </div>
+                            <div className="border-t border-b border-gray-300 pb-4">
+                                <p className="text-left text-xl font-bold text-gray-800 ml-2 mt-2 mb-2">{post.title}</p>
+                                <p className="text-left text-gray-700 ml-5 mr-5">{post.content}</p>
+                            </div>
+                            {post.image && (
+                                <div className="mb-4">
+                                <img src={`${server}/uploads/${post.image}`} className="w-full h-auto rounded-md" />
+                                </div>
+                            )}
+
+                            <div className="flex items-center space-x-4 p-4 bg-gray-100 rounded-md shadow-md">
+                                <input
+                                type="text"
+                                placeholder="Write something"
+                                value={commentContent}
+                                className="flex-grow p-2 border border-gray-300 rounded-md"
+                                onChange={(e) => setCommentContent(e.target.value)}
+                                />
+                                <button
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none" onClick={()=>handleSendComment(post.id)}>
+                                Send
+                                </button>
+                            </div>
+                            <div>
+                            {postComments.slice().reverse().map((comment: Comment) => {
+                                const server = process.env.REACT_APP_API_URL;
+                                return (
+                                    <div key={comment.id} className="flex items-start border-b bg-gray-100 p-4 rounded-lg mt-2 shadow-md">
+                                        <img
+                                            src={`${server}/uploads/${comment.senderImg}` || avatar} // אם אין תמונה, תציג תמונה ברירת מחדל
+                                            alt="Sender"
+                                            className="w-12 h-12 rounded-full mr-4"
+                                        />
+                                        <div className="flex flex-col w-full items-start p-2 bg-gray-200 rounded-lg shadow-md">
+                                            <div className="flex justify-between w-full">
+                                                <span className="font-bold text-lg text-gray-800 pl-2">{comment.senderName}</span>
+                                                {comment.sender == Cookies.get("user_id") && <span className="cursor-pointer" onClick={()=> handleRemoveComment(comment.id)}>
+                                                    🗑️ Delete
+                                                </span>
+                                                }
+                                            </div>
+                                            <div className="rounded-lg mt-1 ml-3">
+                                                <p className="text-gray-600">{comment.content}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            </div>
+                        </div>
+                    );
+                    })}
                 </div>
             </div>
         )}
