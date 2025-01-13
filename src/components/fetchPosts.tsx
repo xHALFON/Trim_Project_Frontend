@@ -30,23 +30,18 @@ FetchPosts.defaultProps = {
 };
 export default function FetchPosts({profile, userIdProp}) {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [profileName, setProfileName] = useState<string>();
-  const [profileImage, setProfileImage] = useState<string>();
-  const [profileImageTop, setProfileImageTop] = useState<string>();
   const [message, setMessage] = useState(''); // הודעה במקרה שאין פוסטים
-  const [newImage, setNewImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false)
   const [editPost, setEditPost] = useState<Post | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>('');
   const [editedContent, setEditedContent] = useState<string>('');
   const [editImage, setEditImage] = useState(null);
-  const [editImageName, setEditImageName] = useState('');
   const [postComments, setPostComments] = useState<Comment[]>([]);
   const [commentModal, setCommentModal] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentContent, setCommentContent] = useState('');
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-  const [commentMessage, setCommentMessage] = useState('');
+  const [commentMessage, setCommentMessage] = useState(''); // הודעה במקרה שאין תגובות
   const [isLoadingComments, setIsLoadingComments] = useState(true);
   const toggleCommentModal = (postId: string) => {
     setSelectedPostId(postId);
@@ -144,7 +139,6 @@ export default function FetchPosts({profile, userIdProp}) {
   const handleEditPostImage = (e) =>{
     const file = e.target.files[0];
     setEditImage(file);
-    setEditImageName(file.name)
   }
 
   const handleDeletePost = async (postId: any) => {
@@ -197,33 +191,12 @@ export default function FetchPosts({profile, userIdProp}) {
             setPosts(posts.map(post => post.id === editPost.id ? updatedPost : post));
             setEditPost(null);
             setEditImage(null);
-            setEditImageName('');
         } catch (error) {
             console.error('Error saving post:', error.response?.data || error.message);
         }
     }
   };
   useEffect(() => {
-    const fetchProfile = async () => {
-      const server = process.env.REACT_APP_API_URL;
-      const userid = Cookies.get('user_id');
-      const accessToken = Cookies.get('accessToken');
-      try {
-        const response = await axios.get(`${server}/auth/${userid}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-
-        setProfileName(response.data.username);
-
-        if (response.data.profileImage === 'none') {
-          setProfileImage(avatar);
-        } else {
-          setProfileImage(`${server}/uploads/${response.data.profileImage}`);
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error.response?.data || error.message);
-      }
-    };
 
     const fetchPosts = async () => {
       const server = process.env.REACT_APP_API_URL;
@@ -252,7 +225,6 @@ export default function FetchPosts({profile, userIdProp}) {
         setMessage('Failed to fetch posts');
       }
     };
-    fetchProfile();
     fetchPosts();
   }, []);
 
@@ -404,7 +376,7 @@ export default function FetchPosts({profile, userIdProp}) {
                     </div>
                     <div className="flex justify-between">
                         <button 
-                            onClick={() => { setEditPost(null); setEditImage(null); setEditImageName(''); }} 
+                            onClick={() => { setEditPost(null); setEditImage(null); }} 
                             className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md"
                         >
                             Cancel
