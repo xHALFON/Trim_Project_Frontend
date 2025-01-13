@@ -1,11 +1,12 @@
-import React from 'react'
-import NavBar from '../components/NavBar.tsx'
+import React, { useEffect } from 'react'
+import FetchPosts from '../components/fetchPosts.tsx';
+import NavBar from '../components/NavBar.tsx';
 
 export default function Home() {
   return (
     <div>
       <NavBar />
-      <p>Home</p> 
+      <FetchPosts />
     </div>
   )
 }

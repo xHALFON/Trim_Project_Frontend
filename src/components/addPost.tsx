@@ -77,9 +77,9 @@ export default function AddPost({setPosts}) {
       </div>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="w-full p-4 border border-gray-300 rounded-full text-left px-16 mb-5 cursor-pointer bg-gray-100 hover:bg-gray-200"
-      >
-        <p className="text-black">Share your thoughts with the world and create a post</p>
+        className="w-full flex p-4 border border-gray-400 rounded-full text-left px-16 mb-5 cursor-pointer bg-gray-100 hover:bg-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <p className="font-bold text-xl flex-grow">Share your thoughts...</p>
+        <div className="text-white text-2xl">📝</div>
       </div>
   
       {isModalOpen && (
