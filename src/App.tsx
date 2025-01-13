@@ -9,6 +9,7 @@ import LoadingSplash from './components/LoadingSplash.tsx';
 import Forbidden from './pages/Forbidden.tsx';
 import Profile from './pages/Profile.tsx';
 import Settings from './pages/Settings.tsx';
+import FetchProfile from './pages/FetchProfile.tsx';
 
 function App() {
   const [auth, setAuth] = useState<string>('');
@@ -70,6 +71,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile setAuth={setAuth} />} />
+            <Route path="/profile/:userName" element={<FetchProfile setAuth={setAuth} />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Forbidden />} />
           </Routes>
