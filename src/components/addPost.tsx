@@ -104,7 +104,7 @@ export default function AddPost({ setPosts }) {
 
   return (
     <div className="max-w-4xl mx-auto px-6">
-      <div className="text-left w-full ml-11 text-3xl mb-2">
+      <div className="text-left w-full ml-11 text-2xl font-bold text-gray-800 mb-2">
         <p>Create a Post</p>
       </div>
       <div
