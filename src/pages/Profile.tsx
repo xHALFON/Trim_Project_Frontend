@@ -6,12 +6,15 @@ import axios from 'axios';
 import avatar from '../assests/Avatar.png';
 import avatarTop from '../assests/topAvatar.jpg';
 import FetchPosts from '../components/fetchPosts.tsx';
+import FemaleIcon from '@mui/icons-material/Female';
+import MaleIcon from '@mui/icons-material/Male';
 
 export default function Profile({ setAuth }) {
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState<string>();
   const [profileImage, setProfileImage] = useState<string>();
   const [profileImageTop, setProfileImageTop] = useState<string>();
+  const [profileGender, setProfileGender] = useState<string>();
 
   const logout = () => {
     Cookies.remove('accessToken');
@@ -74,6 +77,7 @@ export default function Profile({ setAuth }) {
         });
 
         setProfileName(response.data.username);
+        setProfileGender(response.data.gender);
 
         if (response.data.profileImage === 'none') {
           setProfileImage(avatar);
@@ -140,6 +144,7 @@ export default function Profile({ setAuth }) {
                 </button>
               </div>
               <h1 className="text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
+              <span className="mb-4">{profileGender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 40 }} /> : <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} /> }</span>
               <div>
                 <h2 className="text-lg font-semibold text-gray-700 mb-2">Hobbies</h2>
                 <ul className="list-disc list-inside text-gray-600">
@@ -149,7 +154,7 @@ export default function Profile({ setAuth }) {
                 </ul>
               </div>
               <button className="mt-6 bg-blue-900 text-white px-10 py-2 rounded-lg shadow hover:bg-blue-950">
-                Settings
+                Edit Profile
               </button>
               <button
                 onClick={logout}
