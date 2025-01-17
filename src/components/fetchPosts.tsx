@@ -52,6 +52,8 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
 
   const handleNavigateProfile = (profileName) =>{
     navigate(`/profile/${profileName}`);
+    setCommentModal(false);
+    window.scrollTo(0, 0);
   }
   const handleRemoveComment = async (commentId) =>{
     const server = process.env.REACT_APP_API_URL;
@@ -71,7 +73,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
     const server = process.env.REACT_APP_API_URL;
     try{
         const response = await axios.post(`${server}/comments`,{
-            sender: userIdProp,
+            sender: Cookies.get("user_id"),
             content: commentContent,
             postId: postId,
         },
@@ -109,7 +111,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
         const server = process.env.REACT_APP_API_URL;
         const response = await axios.post(`${server}/post/handleLikes`,{ 
             postId, 
-            userId: userIdProp
+            userId: Cookies.get("user_id")
          },
          {
             headers: {
@@ -202,8 +204,9 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
     }
   };
   useEffect(() => {
-
     const fetchPosts = async () => {
+      setIsLoadingPosts(true);
+      setIsLoadingComments(true);
       const server = process.env.REACT_APP_API_URL;
       try {
         const userid = userIdProp;
@@ -233,7 +236,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
       }
     };
     fetchPosts();
-  }, []);
+  }, [userIdProp]);
 
 
   return (
@@ -315,7 +318,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                                 }}
                                 onClick={() => handleLike(post.id)}
                             >
-                                {post.Likes.includes(userIdProp)
+                                {post.Likes.includes(Cookies.get("user_id"))
                                 ? "❤️ Unlike"
                                 : "🤍 Like"}{" "}
                                 {post.numLikes}
@@ -422,9 +425,9 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                                 <img
                                     src={post.senderImg === 'none' ? avatar : `${server}/uploads/${post.senderImg}`}
                                     alt="Sender"
-                                    className="w-11 h-11 rounded-full mr-4"
+                                    className="w-11 h-11 rounded-full mr-4 cursor-pointer" onClick={()=>{handleNavigateProfile(post.senderName)}}
                                 />
-                                <h3 className="text-lg font-bold">{post.senderName || 'Unknown Sender'}</h3>
+                                <h3 className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(post.senderName)}}>{post.senderName || 'Unknown Sender'}</h3>
                                 </div>
                             </div>
                             <div className="border-t border-b border-gray-300 pb-4">
@@ -468,14 +471,14 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                                     <img
                                         src={ comment.senderImg === "none" ? avatar : `${server}/uploads/${comment.senderImg}`}
                                         alt="Sender"
-                                        className="w-12 h-12 rounded-full mr-4"
+                                        className="w-12 h-12 rounded-full mr-4 cursor-pointer" onClick={()=>{handleNavigateProfile(comment.senderName)}}
                                     />
                                     <div className="flex flex-col w-full items-start p-2 bg-gray-200 rounded-lg shadow-md">
                                         <div className="flex justify-between w-full">
-                                        <span className="font-bold text-lg text-gray-800 pl-2">
+                                        <span className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(comment.senderName)}}>
                                             {comment.senderName}
                                         </span>
-                                        {comment.sender == userIdProp && (
+                                        {comment.sender == Cookies.get("user_id") && (
                                             <span
                                             className="cursor-pointer"
                                             onClick={() => handleRemoveComment(comment.id)}

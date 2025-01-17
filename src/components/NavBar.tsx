@@ -1,47 +1,81 @@
-import React from 'react';
-import { FaUser, FaHome, FaUsers, FaCog, FaSearch } from 'react-icons/fa';  // אייקונים של פרופיל ו-פוסטים
-import { Link } from 'react-router-dom';
-
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FaUser, FaHome, FaUsers, FaCog, FaSearch } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import avatar from '../assests/Avatar.png';
+import SearchUsers from './search.tsx';
 export default function NavBar() {
+  const [profileImage, setProfileImage] = useState<string | undefined>();
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [users,setUsers] = useState<any>();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchUsers() {
+        const server = process.env.REACT_APP_API_URL;
+        try {
+            const response = await axios.get(`${server}/auth/users`, {
+                headers: { Authorization: `Bearer ${Cookies.get("accessToken")}` },
+            });
+            setUsers(response.data);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    }
+    fetchUsers();
+    async function fetchProfile() {
+      const server = process.env.REACT_APP_API_URL;
+      const response = await axios.get(`${server}/auth/${Cookies.get("user_id")}`, {
+        headers: { Authorization: `Bearer ${Cookies.get("accessToken")}` },
+      });
+      if (response.data.profileImage !== 'none') {
+        setProfileImage(`${server}/uploads/${response.data.profileImage}`);
+      } else {
+        setProfileImage(avatar);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      navigate(`/profile/${searchTerm.trim()}`);
+    }
+  };
+
   return (
     <div className="bg-blue-900 p-4">
       <div className="flex justify-around items-center">
         {/* צד שמאל - Trim Network */}
-        <div className="text-2xl cursor-pointer text-white font-bold mb-4 sm:mb-0">Trim Network</div>
-
-        {/* צד אמצע - Input חיפוש */}
-        <div className="flex items-center justify-center w-1/3 relative">
-        <input
-            type="text"
-            placeholder="Search..."
-            className="w-full p-2 pl-10 pr-12 rounded-lg border border-blue-500"
-          />
-          <div className="flex items-center text-white ml-5 cursor-pointer">
-            <FaUsers className="text-3xl" />
+        <Link to="/">
+          <div className="text-2xl cursor-pointer text-white font-bold hover:text-gray-200">
+            Trim Network
           </div>
-          <FaSearch className="absolute left-3 text-black top-1/2 transform -translate-y-1/2" />
-        </div>
+        </Link>
 
-        {/* צד ימין - פרופיל ופוסטים */}
-        
-        <div className="flex space-x-6 text-white">
+        <span className="w-1/3">
+        <SearchUsers users={users}/>
+        </span>
+
+        {/* צד ימין - פרופיל ואייקונים */}
+        <div className="flex items-center space-x-6 hover:text-gray-200">
           <Link to="/">
-            <div className="flex items-center cursor-pointer">
-              <FaHome className="text-2xl" />
-            </div>
+            <FaHome className="text-2xl text-white cursor-pointer hover:text-gray-200" />
           </Link>
-
           <Link to="/profile">
-            <div className="flex items-center cursor-pointer">
-              <FaUser className="text-2xl" />
-            </div>
+            <FaUser className="text-2xl text-white cursor-pointer hover:text-gray-200" />
           </Link>
-          
           <Link to="/settings">
-            <div className="flex items-center cursor-pointer">
-              <FaCog className="text-2xl" />
-            </div>
+            <FaCog className="text-2xl text-white cursor-pointer hover:text-gray-200" />
           </Link>
+          {/* תמונת פרופיל */}
+          <div className="w-12 h-12 relative left-5">
+            <img
+              src={profileImage}
+              className="w-full h-full object-cover rounded-full border-2 border-white shadow-lg"
+            />
+          </div>
         </div>
       </div>
     </div>

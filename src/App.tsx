@@ -8,8 +8,9 @@ import Home from './pages/Home.tsx';
 import LoadingSplash from './components/LoadingSplash.tsx';
 import Forbidden from './pages/Forbidden.tsx';
 import Profile from './pages/Profile.tsx';
-import Settings from './pages/Settings.tsx';
 import FetchProfile from './pages/FetchProfile.tsx';
+import NavBar from './components/NavBar.tsx';
+import Explore from './pages/Explore.tsx';
 
 function App() {
   const [auth, setAuth] = useState<string>('');
@@ -68,11 +69,14 @@ function App() {
     return (
       <div className="App">
         <Router>
+        <div>
+          <NavBar />
+        </div>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<div><Home /></div>} />
             <Route path="/profile" element={<Profile setAuth={setAuth} />} />
             <Route path="/profile/:userName" element={<FetchProfile setAuth={setAuth} />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/explore" element={<Explore />} />
             <Route path="*" element={<Forbidden />} />
           </Routes>
         </Router>

@@ -15,8 +15,8 @@ function Welcome({ setAuth }) {
   async function signUp(e: React.FormEvent) {
     e.preventDefault(); 
 
-    if (userName.length < 2) {
-      setError("Username must be at least 2 characters.");
+    if (userName.length < 1 || userName.length > 20) {
+      setError("Username must be at least 1-20 characters.");
       return;
     }
 

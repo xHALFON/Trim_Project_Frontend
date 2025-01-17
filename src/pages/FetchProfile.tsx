@@ -9,6 +9,7 @@ import FetchPosts from '../components/fetchPosts.tsx';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import ClipLoader from "react-spinners/ClipLoader";
+import FetchUsersProfile from '../components/fetchUsersProfile.tsx';
 
 export default function FetchProfile({ setAuth }) {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function FetchProfile({ setAuth }) {
   const [profileImage, setProfileImage] = useState<string>();
   const [profileImageTop, setProfileImageTop] = useState<string>();
   const [profileGender, setProfileGender] = useState<string>();
+  const [profileStatus, setProfileStatus] = useState<string>();
   const [userId,setUserId] = useState<string>();
   const { userName } = useParams();
 
@@ -32,7 +34,8 @@ export default function FetchProfile({ setAuth }) {
     
             setProfileName(response.data.username);
             setProfileGender(response.data.gender);
-    
+            setProfileStatus(response.data.status);
+
             setProfileImage(
             response.data.profileImage === 'none'
                 ? avatar
@@ -51,7 +54,9 @@ export default function FetchProfile({ setAuth }) {
     };
   
     fetchProfile();
-  }, [userId]);  
+    
+  }, [userId]); 
+
   useEffect(() => {
     const fetchId = async () => {
         try {
@@ -66,22 +71,24 @@ export default function FetchProfile({ setAuth }) {
           console.log(response.data.id);
           if (Cookies.get('user_id') === response.data.id) {
             navigate('/profile');
+            window.scrollTo(0, 0);
           }
           setUserId(response.data.id);
         } catch (error) {
           console.error('Error fetching user ID:', error);
           if(error.response.data.message = "User not found"){
             navigate("/UserNotFound");
+            window.scrollTo(0, 0);
           }
         }
     }
     fetchId();
+    
   }, [userName]);
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <NavBar />
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-center pt-10 pb-16">
         <div className="w-2/3  bg-white rounded-lg shadow-lg">
           <div className="w-full h-48 flex items-center justify-center text-white text-2xl font-bold relative border-b border-gray-200"
               style={{
@@ -97,17 +104,15 @@ export default function FetchProfile({ setAuth }) {
           <div className="p-8 flex flex-row-reverse">
             <div className="w-1/3 flex flex-col items-center relative">
               <div className="w-48 h-48 mb-4 relative">
-                <img src={profileImage} alt="Profile" className="w-full h-full object-cover rounded-full shadow-lg" />
+                <img src={profileImage} alt="" className="w-full h-full object-cover rounded-full shadow-lg" />
               </div>
               <h1 className="text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
               <span className="mb-4">{profileGender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 40 }} /> : profileGender == "female" ? <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} /> : ""}</span>
               <div>
-                <h2 className="text-lg font-semibold text-gray-700 mb-2">Hobbies</h2>
-                <ul className="list-disc list-inside text-gray-600">
-                  <li>Coding</li>
-                  <li>Reading</li>
-                  <li>Traveling</li>
-                </ul>
+                <h2 className="text-lg font-semibold text-gray-700 mb-2">{profileStatus}</h2>
+              </div>
+              <div>
+                <FetchUsersProfile />
               </div>
             </div>
             <div className="w-full">

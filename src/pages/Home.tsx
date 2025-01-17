@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 export default function Home() {
   return (
     <div>
-      <NavBar />
       <FetchPosts userIdProp={Cookies.get("user_id")} addPost={true}/>
     </div>
   )
