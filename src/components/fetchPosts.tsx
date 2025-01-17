@@ -4,7 +4,7 @@ import axios from 'axios';
 import avatar from '../assests/Avatar.png';
 import AddPost from './addPost.tsx';
 import ClipLoader from "react-spinners/ClipLoader";
-
+import { useNavigate } from 'react-router-dom';
 interface Post {
   id: any;
   title: string;
@@ -26,10 +26,10 @@ interface Comment {
 }
 FetchPosts.defaultProps = {
     profile: false,
-    userIdProp: null,
 };
-export default function FetchPosts({profile, userIdProp}) {
+export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPropr - account which can edits is own posts and comments
   const [posts, setPosts] = useState<Post[]>([]);
+  const [userName, setUserName] = useState<string>();
   const [message, setMessage] = useState(''); // הודעה במקרה שאין פוסטים
   const [isLoading, setIsLoading] = useState(false)
   const [editPost, setEditPost] = useState<Post | null>(null);
@@ -43,11 +43,16 @@ export default function FetchPosts({profile, userIdProp}) {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [commentMessage, setCommentMessage] = useState(''); // הודעה במקרה שאין תגובות
   const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const navigate = useNavigate();
+  
   const toggleCommentModal = (postId: string) => {
     setSelectedPostId(postId);
     setCommentModal(!commentModal);
   };
 
+  const handleNavigateProfile = (profileName) =>{
+    navigate(`/profile/${profileName}`);
+  }
   const handleRemoveComment = async (commentId) =>{
     const server = process.env.REACT_APP_API_URL;
     try{
@@ -66,7 +71,7 @@ export default function FetchPosts({profile, userIdProp}) {
     const server = process.env.REACT_APP_API_URL;
     try{
         const response = await axios.post(`${server}/comments`,{
-            sender: Cookies.get("user_id"),
+            sender: userIdProp,
             content: commentContent,
             postId: postId,
         },
@@ -104,7 +109,7 @@ export default function FetchPosts({profile, userIdProp}) {
         const server = process.env.REACT_APP_API_URL;
         const response = await axios.post(`${server}/post/handleLikes`,{ 
             postId, 
-            userId: Cookies.get("user_id") 
+            userId: userIdProp
          },
          {
             headers: {
@@ -201,7 +206,7 @@ export default function FetchPosts({profile, userIdProp}) {
     const fetchPosts = async () => {
       const server = process.env.REACT_APP_API_URL;
       try {
-        const userid = Cookies.get('user_id');
+        const userid = userIdProp;
         const accessToken = Cookies.get('accessToken');
 
         if (!userid || !accessToken) {
@@ -212,7 +217,9 @@ export default function FetchPosts({profile, userIdProp}) {
             response = await axios.get(`${server}/post/`,{
                 params: { sender: userid },
                 headers: { Authorization: `Bearer ${accessToken}` },
-              });
+            });
+            const userNameResponse = (await axios.get(`${server}/auth/${userid}`,{headers: { Authorization: `Bearer ${accessToken}` }})).data.username;
+            setUserName(userNameResponse);
         }else{
             response = await axios.get(`${server}/post/`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -233,8 +240,8 @@ export default function FetchPosts({profile, userIdProp}) {
     <div>
       <div className="p-8 flex justify-center">
             <div className={profile ? "w-full pr-20 pl-10 border-r" : "w-1/2 pl-6 border-x pr-8"}>
-              <AddPost setPosts={setPosts} />
-              <h2 className="text-xl font-semibold text-gray-700 border-t pt-5 mb-4">My Posts</h2>
+              {addPost == true ? <AddPost setPosts={setPosts} /> : ""}
+              <h2 className="text-xl font-semibold text-gray-700 border-t pt-5 mb-4">{addPost == true ? "My Posts" : userName ? `${userName} Posts` : ""}</h2>
               {message ? (
                 <p className="text-gray-500">{message}</p>
                 ) : isLoadingPosts ? (
@@ -259,13 +266,14 @@ export default function FetchPosts({profile, userIdProp}) {
                                     : `${server}/uploads/${post.senderImg}`
                                 }
                                 alt="Sender"
-                                className="w-11 h-11 rounded-full mr-4"
+                                className="w-11 h-11 rounded-full mr-4 cursor-pointer"
+                                onClick={()=>{handleNavigateProfile(post.senderName)}}
                             />
-                            <h3 className="text-lg font-bold">
+                            <h3 className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(post.senderName)}}>
                                 {post.senderName || "Unknown Sender"}
                             </h3>
                             </div>
-                            {post.sender === Cookies.get("user_id") && (
+                            {post.sender === userIdProp && addPost == true && (
                             <div className="flex items-center">
                                 <button
                                 className="text-gray-500 hover:text-gray-700 mr-4"
@@ -301,13 +309,13 @@ export default function FetchPosts({profile, userIdProp}) {
                             <button
                                 className="text-blue-500 hover:text-blue-700"
                                 style={{
-                                fontWeight: post.Likes.includes(Cookies.get("user_id"))
+                                fontWeight: post.Likes.includes(userIdProp)
                                     ? "bold"
                                     : 600,
                                 }}
                                 onClick={() => handleLike(post.id)}
                             >
-                                {post.Likes.includes(Cookies.get("user_id"))
+                                {post.Likes.includes(userIdProp)
                                 ? "❤️ Unlike"
                                 : "🤍 Like"}{" "}
                                 {post.numLikes}
@@ -467,7 +475,7 @@ export default function FetchPosts({profile, userIdProp}) {
                                         <span className="font-bold text-lg text-gray-800 pl-2">
                                             {comment.senderName}
                                         </span>
-                                        {comment.sender == Cookies.get("user_id") && (
+                                        {comment.sender == userIdProp && (
                                             <span
                                             className="cursor-pointer"
                                             onClick={() => handleRemoveComment(comment.id)}

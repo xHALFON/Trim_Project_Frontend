@@ -144,7 +144,7 @@ export default function Profile({ setAuth }) {
                 </button>
               </div>
               <h1 className="text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
-              <span className="mb-4">{profileGender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 40 }} /> : <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} /> }</span>
+              <span className="mb-4">{profileGender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 40 }} /> : profileGender == "female" ? <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} /> : ""}</span>
               <div>
                 <h2 className="text-lg font-semibold text-gray-700 mb-2">Hobbies</h2>
                 <ul className="list-disc list-inside text-gray-600">
@@ -164,7 +164,7 @@ export default function Profile({ setAuth }) {
               </button>
             </div>
             <div className="w-full">
-                <FetchPosts profile={true} />
+                <FetchPosts profile={true} userIdProp={Cookies.get("user_id")} addPost={true}/>
             </div>
           </div>
         </div>
