@@ -27,7 +27,7 @@ export default function AddPost({ setPosts }) {
       }
       const response = await axios.post(
         `${server}/post/generateText`,
-        { prompt: `Write post content with 10 rows based on this title ${title}`},
+        { prompt: `Write post content with 7-12 rows based on this title ${title}`},
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("accessToken")}`,

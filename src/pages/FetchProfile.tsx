@@ -11,7 +11,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import ClipLoader from "react-spinners/ClipLoader";
 import FetchUsersProfile from '../components/fetchUsersProfile.tsx';
 
-export default function FetchProfile({ setAuth }) {
+export default function FetchProfile({ setAuth, logout }) {
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState<string>();
   const [profileImage, setProfileImage] = useState<string>();
@@ -58,6 +58,32 @@ export default function FetchProfile({ setAuth }) {
   }, [userId]); 
 
   useEffect(() => {
+    async function refreshToken() {
+      const server = process.env.REACT_APP_API_URL;
+  
+      try {
+        const response = await axios.post(`${server}/auth/refreshToken`, {
+          id: Cookies.get("user_id"),
+          accessToken: Cookies.get("accessToken"),
+        });
+        
+        if(response.status == 201){
+          console.log("token good");
+          return;
+        }else{
+        Cookies.set("accessToken", response.data.accessToken);
+        window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error Refresh Token:", error);
+  
+        if (error.response?.status === 403) {
+          logout();
+          alert("Session expired!");
+        }
+      }
+    }
+    
     const fetchId = async () => {
         try {
           const server = process.env.REACT_APP_API_URL;
@@ -82,8 +108,20 @@ export default function FetchProfile({ setAuth }) {
           }
         }
     }
-    fetchId();
-    
+    async function init() {
+      if (Cookies.get("user_id") && Cookies.get("accessToken")) {
+        try {
+          await refreshToken();
+          await fetchId();
+        } catch (error) {
+          console.error("Initialization failed:", error);
+        }
+      } else {
+        logout();
+        alert("Session expired");
+      }
+    }
+    init();
   }, [userName]);
 
   return (

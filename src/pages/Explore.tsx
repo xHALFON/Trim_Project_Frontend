@@ -19,7 +19,7 @@ interface User {
   profileImageTop: string;
 }
 
-export default function Explore() {
+export default function Explore({ setAuth, logout }) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -29,15 +29,49 @@ export default function Explore() {
   };
 
   const shuffleArray = (array: User[]) => {
-    let shuffledArray = [...array]; // יצירת העתק של המערך
+    let shuffledArray = [...array];
     for (let i = shuffledArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]; // Swap
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
     }
     return shuffledArray;
   };
 
   useEffect(() => {
+    async function refreshToken() {
+      const server = process.env.REACT_APP_API_URL;
+
+      try {
+        const response = await axios.post(`${server}/auth/refreshToken`, {
+          id: Cookies.get("user_id"),
+          accessToken: Cookies.get("accessToken"),
+        });
+
+        if(response.status === 201){
+          console.log("token good");
+          return;
+        }else{
+          Cookies.set("accessToken", response.data.accessToken);
+          window.location.reload();
+        }
+
+      } catch (error) {
+        console.error("Error Refresh Token:", error);
+
+        if (error.response?.status === 403) {
+          logout();
+          alert("Session expired!");
+        }
+      }
+    }
+
+    if (Cookies.get("user_id") && Cookies.get("accessToken")) {
+      refreshToken();
+    } else {
+      logout();
+      alert("Missing user credentials");
+    }
+
     async function fetchUsers() {
       setLoading(true);
       const server = process.env.REACT_APP_API_URL;
@@ -60,49 +94,56 @@ export default function Explore() {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-3/5 border-x px-10">
-      {/* כותרת */}
-      {!loading && <h1 className="text-3xl font-bold text-gray-800 mb-4">Explore Users</h1>}
+      <div className="w-full md:w-3/5 border-x px-4 sm:px-6 md:px-10">
+        {!loading && <h1 className="text-3xl font-bold text-gray-800 mb-4">Explore Users</h1>}
 
-      {!loading ? <div className="grid grid-cols-1 sm:grid-cols-2 pt-7 border-t-2 border-gray-200 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {(users.filter((user) => user._id !== Cookies.get("user_id")).slice(0,12).map((user, index) => (
-              <div
-                key={index}
-                className="bg-white shadow-lg rounded-xl border-2 overflow-hidden flex flex-col items-center p-2 w-56 h-64 cursor-pointer transition-all duration-20 hover:border-2 hover:border-blue-900"
-                onClick={() => {
-                  handleNavigateProfile(user.username);
-                }}>
-                {/* רקע מאחורי התמונה */}
+        {!loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-7 border-t-2 border-gray-200 gap-6">
+            {users
+              .filter((user) => user._id !== Cookies.get("user_id"))
+              .slice(0, 12)
+              .map((user, index) => (
                 <div
-                  className="w-full h-20 bg-cover bg-center"
-                  style={{
-                    backgroundImage:
-                      user.profileImageTop !== "none"
-                        ? `url(${process.env.REACT_APP_API_URL}/uploads/${user.profileImageTop})`
-                        : `url(${avatarTop})`,
-                  }}
-                ></div>
-                {/* תמונת פרופיל */}
-                <img
-                  src={
-                    user.profileImage !== "none"
-                      ? `${process.env.REACT_APP_API_URL}/uploads/${user.profileImage}`
-                      : avatar
-                  }
-                  alt={`${user.username}'s profile`}
-                  className="w-16 h-16 rounded-full border-4 border-white -mt-8"
-                />
-                {/* שם משתמש */}
-                <h3 className="text-lg font-semibold text-gray-800 mt-4">
-                  {user.username}
-                </h3>
-                <h4 className="text-gray-600 break-words">{user.status}</h4>
-                <span className="mt-1">{user.gender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 30 }} /> : user.gender == "female" ? <FemaleIcon sx={{ color: '#ed007b', fontSize: 30 }} /> : ""}</span>
-              </div>
-            ))
+                  key={index}
+                  className="bg-white shadow-lg rounded-xl border-2 overflow-hidden flex flex-col items-center pb-10 w-full h-auto max-w-[280px] cursor-pointer transition-all duration-300 hover:border-2 hover:border-blue-900"
+                  onClick={() => handleNavigateProfile(user.username)}
+                >
+                  <div
+                    className="w-full h-20 bg-cover bg-center"
+                    style={{
+                      backgroundImage:
+                        user.profileImageTop !== "none"
+                          ? `url(${process.env.REACT_APP_API_URL}/uploads/${user.profileImageTop})`
+                          : `url(${avatarTop})`,
+                    }}
+                  ></div>
+                  <img
+                    src={
+                      user.profileImage !== "none"
+                        ? `${process.env.REACT_APP_API_URL}/uploads/${user.profileImage}`
+                        : avatar
+                    }
+                    alt={`${user.username}'s profile`}
+                    className="w-20 h-20 rounded-full border-4 border-white -mt-10 object-cover"
+                  />
+                  <h3 className="text-lg font-semibold text-gray-800 mt-4">{user.username}</h3>
+                  <h4 className="text-gray-600 text-center break-words">{user.status}</h4>
+                  <span className="mt-2">
+                    {user.gender === "male" ? (
+                      <MaleIcon sx={{ color: "blue", fontSize: 30 }} />
+                    ) : user.gender === "female" ? (
+                      <FemaleIcon sx={{ color: "#ed007b", fontSize: 30 }} />
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <ClipLoader />
         )}
-      </div> : <ClipLoader />}
-    </div>
+      </div>
     </div>
   );
 }

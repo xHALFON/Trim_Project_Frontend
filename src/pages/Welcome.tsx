@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavbarLogin from '../components/NavBarLogin.tsx';
 import network from "../assests/Network.png";
 import Cookies from "js-cookie";
 import axios from 'axios';
+import googlelogo from '../assests/google.png';
 
 function Welcome({ setAuth }) {
   const [userName, setUserName] = useState<string>('');
@@ -11,6 +12,10 @@ function Welcome({ setAuth }) {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [gender, setGender] = useState<string>('');
   const [error, setError] = useState('');
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  };
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault(); 
@@ -68,6 +73,11 @@ function Welcome({ setAuth }) {
     }
   }
 
+  useEffect(() => {
+    if(Cookies.get("accessToken")){
+      setAuth(Cookies.get("accessToken"))
+    }
+  }, []);
   return (
     <div className="h-screen flex flex-col">
       <NavbarLogin setAuth={setAuth} />
@@ -82,9 +92,14 @@ function Welcome({ setAuth }) {
 
         {/* Right side - Form */}
         <div className="w-full sm:w-1/2 flex justify-center items-center bg-gray-100">
-          <form className="w-3/5 max-w-lg p-8 bg-white rounded-lg shadow-lg" onSubmit={signUp}>
-            <h1 className="text-4xl font-bold text-center text-blue-600 mb-3">Welcome to Our Platform</h1>
-            <p className="text-center text-gray-600 mb-1">Create your account to get started.</p>
+          <div
+            className="w-3/5 max-w-lg p-8 bg-white rounded-lg shadow-lg">
+            <h1 className="text-4xl font-bold text-center text-blue-600 mb-3">
+              Welcome to Our Platform
+            </h1>
+            <p className="text-center text-gray-600 mb-1">
+              Create your account to get started.
+            </p>
 
             {error && <div className="mb-4 text-red-500">{error}</div>}
 
@@ -129,7 +144,9 @@ function Welcome({ setAuth }) {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="gender" className="block text-gray-700 mb-2">Gender</label>
+              <label htmlFor="gender" className="block text-gray-700 mb-2">
+                Gender
+              </label>
               <select
                 id="gender"
                 name="gender"
@@ -142,14 +159,24 @@ function Welcome({ setAuth }) {
                 <option value="female">Female</option>
               </select>
             </div>
-
             <button
-              type="submit"
+              onClick={signUp}
               className="w-full p-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Sign Up
             </button>
-          </form>
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full p-4 mt-5 bg-white text-gray-600 rounded-md bg-gray-100 flex items-center justify-center border border-gray-300 hover:bg-gray-200"
+            >
+              <img
+                src={googlelogo}
+                alt="Google Logo"
+                className="h-6 w-6 mr-3"
+              />
+              Sign in with Google
+            </button>
+          </div>
         </div>
       </div>
     </div>

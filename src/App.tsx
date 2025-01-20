@@ -11,11 +11,18 @@ import Profile from './pages/Profile.tsx';
 import FetchProfile from './pages/FetchProfile.tsx';
 import NavBar from './components/NavBar.tsx';
 import Explore from './pages/Explore.tsx';
+import Settings from './pages/settings.tsx';
 
 function App() {
   const [auth, setAuth] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   
+  const logout = () => {
+    Cookies.remove('accessToken');
+    Cookies.remove('user_id');
+    setAuth('');
+  };
+
   useEffect(() => {
     setLoading(true)
     async function checkToken(){
@@ -70,14 +77,15 @@ function App() {
       <div className="App">
         <Router>
         <div>
-          <NavBar />
+          <NavBar setAuth={setAuth}/>
         </div>
           <Routes>
-            <Route path="/" element={<div><Home /></div>} />
-            <Route path="/profile" element={<Profile setAuth={setAuth} />} />
-            <Route path="/profile/:userName" element={<FetchProfile setAuth={setAuth} />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="*" element={<Forbidden />} />
+            <Route path="/" element={<div><Home setAuth={setAuth} logout={logout} /></div>} />
+            <Route path="/profile" element={<Profile setAuth={setAuth} logout={logout} />} />
+            <Route path="/profile/:userName" element={<FetchProfile setAuth={setAuth} logout={logout} />} />
+            <Route path="/explore" element={<Explore setAuth={setAuth} logout={logout}/> } />
+            <Route path="/settings" element={<Settings setAuth={setAuth} logout={logout}/> } />
+            <Route path="*" element={<Forbidden setAuth={setAuth} logout={logout} />} />
           </Routes>
         </Router>
       </div>

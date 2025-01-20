@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaUsers } from "react-icons/fa";
 import avatar from '../assests/Avatar.png';
+import FemaleIcon from '@mui/icons-material/Female';
+import MaleIcon from '@mui/icons-material/Male';
 
 type User = {
   _id: string;
@@ -67,12 +69,11 @@ export default function SearchUsers({ users }: { users: User[] }) {
         {filteredUsers.length > 0 && (
           <ul className="absolute bg-white w-full mt-2 border border-gray-300 rounded-lg shadow-md max-h-60 overflow-y-auto z-10">
             {filteredUsers.map((user) => {
-                
                 return(
               <li
                 key={user._id}
                 onClick={() => handleUserClick(user.username)}
-                className="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-100"
+                className="flex items-center justify-between p-2 border-y cursor-pointer hover:bg-gray-100"
               >
                 {/* תמונה בצד שמאל */}
                 <div className="flex items-center">
@@ -83,7 +84,15 @@ export default function SearchUsers({ users }: { users: User[] }) {
                   <span className="text-sm font-medium">{user.username}</span>
                 </div>
                 {/* מגדר בצד ימין */}
-                <span className="text-sm text-gray-500">{user.gender}</span>
+                <span>
+                    {user.gender === 'male' ? (
+                    <MaleIcon sx={{ color: 'blue', fontSize: 25 }} />
+                    ) : user.gender === 'female' ? (
+                    <FemaleIcon sx={{ color: '#ed007b', fontSize: 25 }} />
+                    ) : (
+                    ''
+                    )}
+                </span>
               </li>
             )})}
           </ul>
