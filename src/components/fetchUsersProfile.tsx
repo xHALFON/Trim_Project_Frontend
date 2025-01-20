@@ -25,7 +25,9 @@ export default function FetchUsersProfile() {
     const navigate = useNavigate();
 
     const handleNavigateProfile = (profileName: string) => {
-        navigate(`/profile/${profileName}`);
+        if(profileName){
+            navigate(`/profile/${profileName}`);
+        }
         setReload(!reload);
         window.scrollTo(0, 0);
     };

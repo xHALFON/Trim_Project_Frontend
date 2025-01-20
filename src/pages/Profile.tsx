@@ -10,7 +10,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import FetchUsersProfile from '../components/fetchUsersProfile.tsx';
 
-export default function Profile({ setAuth }) {
+export default function Profile({ setAuth, logout }) {
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState<string>('');
   const [profileImage, setProfileImage] = useState<string>('');
@@ -24,12 +24,6 @@ export default function Profile({ setAuth }) {
   const [updateImage, setUpdateImage] = useState<any>('');
   const [updateImageModal,setUpdateImageModal] = useState<any>(null);
   const [message, setMessage] = useState<string>('');
-  const logout = () => {
-    Cookies.remove('accessToken');
-    Cookies.remove('user_id');
-    setAuth('');
-    navigate('/');
-  };
 
   const handleImageEdit = (e) => {
     const file = e.target.files[0];
@@ -125,6 +119,40 @@ export default function Profile({ setAuth }) {
   };
 
   useEffect(() => {
+    async function refreshToken() {
+      const server = process.env.REACT_APP_API_URL;
+  
+      try {
+        const response = await axios.post(`${server}/auth/refreshToken`, {
+          id: Cookies.get("user_id"),
+          accessToken: Cookies.get("accessToken"),
+        });
+        
+        if(response.status == 201){
+          console.log("token good");
+          return;
+        }else{
+          Cookies.set("accessToken", response.data.accessToken);
+          window.location.reload();
+        }
+
+      } catch (error) {
+        console.error("Error Refresh Token:", error);
+  
+        if (error.response?.status === 403) {
+          logout();
+          alert("Session expired!");
+        }
+      }
+    }
+  
+    if (Cookies.get("user_id") && Cookies.get("accessToken")) {
+      refreshToken();
+    } else {
+      logout();
+      alert("Missing user credentials");
+    }
+    
     const fetchProfile = async () => {
       const server = process.env.REACT_APP_API_URL;
       const userid = Cookies.get('user_id');

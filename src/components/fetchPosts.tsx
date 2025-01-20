@@ -43,6 +43,9 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [commentMessage, setCommentMessage] = useState(''); // הודעה במקרה שאין תגובות
   const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [visiblePostsCount, setVisiblePostsCount] = useState(-1); // התחל עם 10 פוסטים
+  const [isLoadingPostsCount, setIsLoadingPostsCount] = useState(false);
+  let fetched = false;
   const navigate = useNavigate();
   
   const toggleCommentModal = (postId: string) => {
@@ -229,7 +232,9 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
             });
         }
         setPosts(response.data);
-        setIsLoadingPosts(false)
+        setVisiblePostsCount(4);
+        setIsLoadingPosts(false);
+        fetched = true
       } catch (error) {
         console.error('Error fetching posts:', error.response?.data || error.message);
         setMessage('Failed to fetch posts');
@@ -238,7 +243,23 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
     fetchPosts();
   }, [userIdProp]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 200
+       && fetched == true) {
+        setIsLoadingPostsCount(true)
+        setTimeout(()=>{
+            setVisiblePostsCount((prev) => prev + 4); // הצג עוד 10 פוסטים
+            setIsLoadingPostsCount(false)
+        },1000)
+      }
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   return (
     <div>
       <div className="p-8 flex justify-center">
@@ -253,7 +274,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                 </div>
                 ) : posts.length > 0 ? (
                 <ul className="space-y-4">
-                    {posts.slice().reverse().map((post, index) => {
+                    {posts.slice(posts.length - visiblePostsCount, posts.length).reverse().map((post, index) => {
                     const server = process.env.REACT_APP_API_URL;
                     return (
                         <li
@@ -345,6 +366,9 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                     {profile ? "No posts here... yet! Stay tuned for the user's first post" : "Seems like there is no posts yet"}
                 </p>
                 )}
+                <div className='mt-5'>
+                    {isLoadingPostsCount ? <div><ClipLoader /></div> : visiblePostsCount >= posts.length && <div>Yay, you've reached all the posts!</div>}
+                </div>
 
             </div>
             {editPost && ( // edit post window
