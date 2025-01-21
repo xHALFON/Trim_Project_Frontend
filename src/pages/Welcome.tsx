@@ -81,76 +81,78 @@ function Welcome({ setAuth }) {
   return (
     <div className="h-screen flex flex-col">
       <NavbarLogin setAuth={setAuth} />
-      <div className="flex h-full">
+      <div className="flex h-full flex-wrap">
         {/* Left side - Background image, hidden on small screens */}
-        <div className="w-1/2 h-full bg-gray-100 bg-contain bg-center hidden sm:block" style={{
-          backgroundImage: `url(${network})`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: 'center 55%',
-          backgroundSize: '90%'
-        }}></div>
-
+        <div
+          className="w-full sm:w-1/2 h-64 sm:h-full bg-gray-100 bg-contain bg-center hidden sm:block"
+          style={{
+            backgroundImage: `url(${network})`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: 'center 55%',
+            backgroundSize: '90%'
+          }}
+        ></div>
+  
         {/* Right side - Form */}
-        <div className="w-full sm:w-1/2 flex justify-center items-center bg-gray-100">
-          <div
-            className="w-3/5 max-w-lg p-8 bg-white rounded-lg shadow-lg">
-            <h1 className="text-4xl font-bold text-center text-blue-600 mb-3">
+        <div className="w-full sm:w-1/2 flex justify-center items-center bg-gray-100 px-4">
+          <div className="w-full sm:w-3/5 max-w-lg p-6 sm:p-8 bg-white rounded-lg shadow-lg">
+            <h1 className="text-2xl sm:text-4xl font-bold text-center text-blue-600 mb-4">
               Welcome to Our Platform
             </h1>
-            <p className="text-center text-gray-600 mb-1">
+            <p className="text-center text-gray-600 mb-4 text-sm sm:text-base">
               Create your account to get started.
             </p>
-
-            {error && <div className="mb-4 text-red-500">{error}</div>}
-
-            <div className="mb-6">
+  
+            {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
+  
+            <div className="mb-4">
               <input
                 type="text"
                 placeholder="Username"
-                className="w-full p-4 border border-gray-300 rounded-md"
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-md"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
-
-            <div className="mb-6">
+  
+            <div className="mb-4">
               <input
                 type="email"
                 placeholder="Email"
-                className="w-full p-4 border border-gray-300 rounded-md"
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-md"
                 value={Email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
-            <div className="mb-6">
+  
+            <div className="mb-4">
               <input
                 type="password"
                 placeholder="Password"
-                className="w-full p-4 border border-gray-300 rounded-md"
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-md"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
-            <div className="mb-6">
+  
+            <div className="mb-4">
               <input
                 type="password"
                 placeholder="Confirm Password"
-                className="w-full p-4 border border-gray-300 rounded-md"
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-md"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
-
-            <div className="mb-6">
-              <label htmlFor="gender" className="block text-gray-700 mb-2">
+  
+            <div className="mb-4">
+              <label htmlFor="gender" className="block text-gray-700 mb-2 text-sm sm:text-base">
                 Gender
               </label>
               <select
                 id="gender"
                 name="gender"
-                className="w-full p-4 border border-gray-300 rounded-md"
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-md"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
@@ -159,20 +161,22 @@ function Welcome({ setAuth }) {
                 <option value="female">Female</option>
               </select>
             </div>
+  
             <button
               onClick={signUp}
-              className="w-full p-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="w-full p-3 sm:p-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm sm:text-base"
             >
               Sign Up
             </button>
+  
             <button
               onClick={handleGoogleLogin}
-              className="w-full p-4 mt-5 bg-white text-gray-600 rounded-md bg-gray-100 flex items-center justify-center border border-gray-300 hover:bg-gray-200"
+              className="w-full p-3 sm:p-4 mt-4 bg-white text-gray-600 rounded-md bg-gray-100 flex items-center justify-center border border-gray-300 hover:bg-gray-200 text-sm sm:text-base"
             >
               <img
                 src={googlelogo}
                 alt="Google Logo"
-                className="h-6 w-6 mr-3"
+                className="h-5 sm:h-6 w-5 sm:w-6 mr-2"
               />
               Sign in with Google
             </button>

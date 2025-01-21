@@ -262,8 +262,8 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
   }, []);
   return (
     <div>
-      <div className="p-8 flex justify-center">
-            <div className={profile ? "w-full pr-20 pl-10 border-r" : "w-1/2 pl-6 border-x pr-8"}>
+      <div className="lg:p-4 md:p-8 flex justify-center">
+            <div className={profile ? "w-full lg:px-4 md:pr-20 md:pl-10 md:border-r" : "w-full md:w-1/2 px-4 md:px-8 md:border-x"}>
               {addPost == true ? <AddPost setPosts={setPosts} /> : ""}
               <h2 className="text-xl font-semibold text-gray-700 border-t pt-5 mb-4">{addPost == true ? "My Posts" : userName ? `${userName} Posts` : ""}</h2>
               {message ? (
@@ -279,10 +279,10 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                     return (
                         <li
                         key={index}
-                        className="bg-gray-100 p-4 rounded-md shadow-md text-gray-800"
+                        className="bg-gray-100 p-3 md:p-4 rounded-md shadow-md text-gray-800"
                         >
-                        <div className="flex justify-between mb-4">
-                            <div className="flex items-center">
+                        <div className="flex flex-col md:flex-row md:justify-between mb-4">
+                            <div className="flex items-center mb-3 md:mb-0">
                             <img
                                 src={
                                 post.senderImg === "none"
@@ -290,10 +290,10 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                                     : `${server}/uploads/${post.senderImg}`
                                 }
                                 alt="Sender"
-                                className="w-11 h-11 rounded-full mr-4 cursor-pointer"
+                                className="w-10 h-10 md:w-11 md:h-11 rounded-full mr-4 cursor-pointer"
                                 onClick={()=>{handleNavigateProfile(post.senderName)}}
                             />
-                            <h3 className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(post.senderName)}}>
+                            <h3 className="text-base md:text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(post.senderName)}}>
                                 {post.senderName || "Unknown Sender"}
                             </h3>
                             </div>
@@ -315,10 +315,10 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                             )}
                         </div>
                         <div className="border-t border-b border-gray-300 pb-4">
-                            <p className="text-left text-xl font-bold text-gray-800 ml-2 mt-2 mb-2">
+                            <p className="text-left text-lg md:text-xl font-bold text-gray-800 ml-2 mt-2 mb-2">
                             {post.title}
                             </p>
-                            <p className="text-left text-gray-700 ml-5 mr-5">{post.content}</p>
+                            <p className="text-left text-gray-700 ml-3 mr-3 md:ml-5 md:mr-5">{post.content}</p>
                         </div>
                         {post.image && (
                             <div className="mb-4">
@@ -331,7 +331,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                         <div className="flex justify-around items-center mt-4">
                             <div className="w-1/2">
                             <button
-                                className="text-blue-500 hover:text-blue-700"
+                                className="text-sm md:text-base text-blue-500 hover:text-blue-700"
                                 style={{
                                 fontWeight: post.Likes.includes(userIdProp)
                                     ? "bold"
@@ -347,7 +347,7 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                             </div>
                             <div className="w-1/2">
                             <button
-                                className="text-blue-500 hover:text-blue-700 font-semibold"
+                                className="text-sm md:text-base text-blue-500 hover:text-blue-700 font-semibold"
                                 onClick={() => {
                                 toggleCommentModal(post.id.toString());
                                 fetchCommentsFromPost(post.id);
@@ -369,98 +369,134 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                 <div className='mt-5'>
                     {isLoadingPostsCount ? <div><ClipLoader /></div> : visiblePostsCount >= posts.length && <div>Yay, you've reached all the posts!</div>}
                 </div>
-
             </div>
-            {editPost && ( // edit post window
-            <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[80vh] overflow-y-auto">
+            {editPost && (
+                <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75">
+                    <div
+                    className="bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-3/4 md:w-2/3 lg:w-1/3 max-h-[80vh] overflow-y-auto"
+                    >
                     <h3 className="text-2xl font-bold mb-4">Edit Post</h3>
                     <div>
                         <label className="block text-sm font-semibold mb-2">Title</label>
                         <input
-                            type="text"
-                            value={editedTitle}
-                            onChange={(e) => setEditedTitle(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                        type="text"
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md mb-4"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-semibold mb-2">Content</label>
                         <textarea
-                            value={editedContent}
-                            onChange={(e) => setEditedContent(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md mb-4"
                         />
                     </div>
                     <div className="mb-1">
                         <input
-                            type="file"
-                            onChange={handleEditPostImage}
-                            className="border border-gray-300 px-2 py-2 my-7 rounded-md"
+                        type="file"
+                        onChange={handleEditPostImage}
+                        className="border border-gray-300 px-2 py-2 my-7 rounded-md"
                         />
                         {editImage && (
-                            <div className="mt-1 flex justify-center">
-                                <img 
-                                    src={URL.createObjectURL(editImage)} 
-                                    alt="Uploaded" 
-                                    className="max-w-full h-auto rounded-lg" 
-                                    style={{ maxWidth: '300px', maxHeight: '300px' }} 
-                                />
-                            </div>
+                        <div className="mt-1 flex justify-center">
+                            <img
+                            src={URL.createObjectURL(editImage)}
+                            alt="Uploaded"
+                            className="max-w-full h-auto rounded-lg"
+                            style={{ maxWidth: '300px', maxHeight: '300px' }}
+                            />
+                        </div>
                         )}
                     </div>
                     <div className="flex justify-between">
-                        <button 
-                            onClick={() => { setEditPost(null); setEditImage(null); }} 
-                            className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md"
+                        <button
+                        onClick={() => {
+                            setEditPost(null);
+                            setEditImage(null);
+                        }}
+                        className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md"
                         >
-                            Cancel
+                        Cancel
                         </button>
-                        <button 
-                            onClick={handleSaveEdit} 
-                            className="bg-blue-500 text-white px-6 py-2 rounded-md"
+                        <button
+                        onClick={handleSaveEdit}
+                        className="bg-blue-500 text-white px-6 py-2 rounded-md"
                         >
-                            Save
+                        Save
                         </button>
                     </div>
+                    </div>
                 </div>
-            </div>
-        )}
-        {commentModal && selectedPostId && (
-            <div
-                className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
-                onClick={() => {setCommentModal(false); setPostComments([]); setIsLoadingComments(true)}}>
+                )}
+                {commentModal && selectedPostId && (
                 <div
-                className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-y-auto relative"
-                onClick={(e) => e.stopPropagation()} >
-                <button
-                    onClick={() => {setCommentModal(false); setPostComments([]); setIsLoadingComments(true)}}
-                    className="absolute top-7 right-12 text-xl text-gray-600 hover:text-gray-900 focus:outline-none">
-                    <span className="text-5xl">&times;</span>
-                </button>
-                {posts
-                    .filter(post => post.id.toString() === selectedPostId)
-                    .map(post => {
-                    const server = process.env.REACT_APP_API_URL;
-                    return (
-                        <div className="bg-gray-100 p-4 rounded-md shadow-md text-gray-800">
+                    className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+                    onClick={() => {
+                    setCommentModal(false);
+                    setPostComments([]);
+                    setIsLoadingComments(true);
+                    }}
+                >
+                    <div
+                    className="bg-white p-6 rounded-lg shadow-lg w-[95%] sm:w-4/5 md:w-2/3 lg:w-1/2 xl:w-1/3 max-h-[90vh] overflow-y-auto relative"
+                    onClick={(e) => e.stopPropagation()}
+                    >
+                    <button
+                        onClick={() => {
+                        setCommentModal(false);
+                        setPostComments([]);
+                        setIsLoadingComments(true);
+                        }}
+                        className="absolute top-7 right-12 text-xl text-gray-600 hover:text-gray-900 focus:outline-none"
+                    >
+                        <span className="text-5xl">&times;</span>
+                    </button>
+                    {posts
+                        .filter((post) => post.id.toString() === selectedPostId)
+                        .map((post) => {
+                        const server = process.env.REACT_APP_API_URL;
+                        return (
+                            <div className="bg-gray-100 p-4 rounded-md shadow-md text-gray-800">
                             <div className="flex justify-between mb-4">
                                 <div className="flex items-center">
                                 <img
-                                    src={post.senderImg === 'none' ? avatar : `${server}/uploads/${post.senderImg}`}
+                                    src={
+                                    post.senderImg === "none"
+                                        ? avatar
+                                        : `${server}/uploads/${post.senderImg}`
+                                    }
                                     alt="Sender"
-                                    className="w-11 h-11 rounded-full mr-4 cursor-pointer" onClick={()=>{handleNavigateProfile(post.senderName)}}
+                                    className="w-11 h-11 rounded-full mr-4 cursor-pointer"
+                                    onClick={() => {
+                                    handleNavigateProfile(post.senderName);
+                                    }}
                                 />
-                                <h3 className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(post.senderName)}}>{post.senderName || 'Unknown Sender'}</h3>
+                                <h3
+                                    className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline"
+                                    onClick={() => {
+                                    handleNavigateProfile(post.senderName);
+                                    }}
+                                >
+                                    {post.senderName || "Unknown Sender"}
+                                </h3>
                                 </div>
                             </div>
                             <div className="border-t border-b border-gray-300 pb-4">
-                                <p className="text-left text-xl font-bold text-gray-800 ml-2 mt-2 mb-2">{post.title}</p>
-                                <p className="text-left text-gray-700 ml-5 mr-5">{post.content}</p>
+                                <p className="text-left text-xl font-bold text-gray-800 ml-2 mt-2 mb-2">
+                                {post.title}
+                                </p>
+                                <p className="text-left text-gray-700 ml-5 mr-5">
+                                {post.content}
+                                </p>
                             </div>
                             {post.image && (
                                 <div className="mb-4">
-                                <img src={`${server}/uploads/${post.image}`} className="w-full h-auto rounded-md" />
+                                <img
+                                    src={`${server}/uploads/${post.image}`}
+                                    className="w-full h-auto rounded-md"
+                                />
                                 </div>
                             )}
 
@@ -473,61 +509,83 @@ export default function FetchPosts({profile, userIdProp, addPost}) { // useIdPro
                                 onChange={(e) => setCommentContent(e.target.value)}
                                 />
                                 <button
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none" onClick={()=>handleSendComment(post.id)}>
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+                                onClick={() => handleSendComment(post.id)}
+                                >
                                 Send
                                 </button>
                             </div>
                             {commentMessage ? (
-                            <p className="text-gray-500">{commentMessage}</p>
+                                <p className="text-gray-500">{commentMessage}</p>
                             ) : isLoadingComments ? (
-                            <div className="mt-10">
+                                <div className="mt-10">
                                 <ClipLoader />
-                            </div>
+                                </div>
                             ) : postComments.length > 0 ? (
-                            <div>
-                                {postComments.slice().reverse().map((comment: Comment) => {
-                                const server = process.env.REACT_APP_API_URL;
-                                return (
-                                    <div
-                                    key={comment.id}
-                                    className="flex items-start border-b bg-gray-100 p-4 rounded-lg mt-2 shadow-md"
-                                    >
-                                    <img
-                                        src={ comment.senderImg === "none" ? avatar : `${server}/uploads/${comment.senderImg}`}
-                                        alt="Sender"
-                                        className="w-12 h-12 rounded-full mr-4 cursor-pointer" onClick={()=>{handleNavigateProfile(comment.senderName)}}
-                                    />
-                                    <div className="flex flex-col w-full items-start p-2 bg-gray-200 rounded-lg shadow-md">
-                                        <div className="flex justify-between w-full">
-                                        <span className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline hover:after:content-[''] hover:after:block hover:after:w-full hover:after:h-[2px] hover:after:bg-current hover:after:absolute hover:after:left-0 hover:after:bottom-[0px]" onClick={()=>{handleNavigateProfile(comment.senderName)}}>
-                                            {comment.senderName}
-                                        </span>
-                                        {comment.sender == Cookies.get("user_id") && (
+                                <div>
+                                {postComments
+                                    .slice()
+                                    .reverse()
+                                    .map((comment: Comment) => {
+                                    const server = process.env.REACT_APP_API_URL;
+                                    return (
+                                        <div
+                                        key={comment.id}
+                                        className="flex items-start border-b bg-gray-100 p-4 rounded-lg mt-2 shadow-md"
+                                        >
+                                        <img
+                                            src={
+                                            comment.senderImg === "none"
+                                                ? avatar
+                                                : `${server}/uploads/${comment.senderImg}`
+                                            }
+                                            alt="Sender"
+                                            className="w-12 h-12 rounded-full mr-4 cursor-pointer"
+                                            onClick={() => {
+                                            handleNavigateProfile(comment.senderName);
+                                            }}
+                                        />
+                                        <div className="flex flex-col w-full items-start p-2 bg-gray-200 rounded-lg shadow-md">
+                                            <div className="flex justify-between w-full">
                                             <span
-                                            className="cursor-pointer"
-                                            onClick={() => handleRemoveComment(comment.id)}
+                                                className="text-lg font-bold cursor-pointer relative hover:underline hover:no-underline"
+                                                onClick={() => {
+                                                handleNavigateProfile(comment.senderName);
+                                                }}
                                             >
-                                            🗑️ Delete
+                                                {comment.senderName}
                                             </span>
-                                        )}
+                                            {comment.sender == Cookies.get("user_id") && (
+                                                <span
+                                                className="cursor-pointer"
+                                                onClick={() =>
+                                                    handleRemoveComment(comment.id)
+                                                }
+                                                >
+                                                🗑️ Delete
+                                                </span>
+                                            )}
+                                            </div>
+                                            <div className="rounded-lg mt-1 ml-3">
+                                            <p className="text-gray-600">
+                                                {comment.content}
+                                            </p>
+                                            </div>
                                         </div>
-                                        <div className="rounded-lg mt-1 ml-3">
-                                        <p className="text-gray-600">{comment.content}</p>
                                         </div>
-                                    </div>
-                                    </div>
-                                );
-                                })}
-                            </div>
+                                    );
+                                    })}
+                                </div>
                             ) : (
-                            <p className="mt-5 text-gray-500">No comments yet</p>
+                                <p className="mt-5 text-gray-500">No comments yet</p>
                             )}
-                        </div>
-                    );
-                    })}
+                            </div>
+                        );
+                        })}
+                    </div>
                 </div>
-            </div>
-        )}
+                )}
+
           </div>
     </div>
   )

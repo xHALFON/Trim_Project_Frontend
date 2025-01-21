@@ -98,7 +98,7 @@ export default function Explore({ setAuth, logout }) {
         {!loading && <h1 className="text-3xl font-bold text-gray-800 mb-4">Explore Users</h1>}
 
         {!loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-7 border-t-2 border-gray-200 gap-6">
+          <div className="grid flex grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-7 border-t-2 border-gray-200 gap-6">
             {users
               .filter((user) => user._id !== Cookies.get("user_id"))
               .slice(0, 12)

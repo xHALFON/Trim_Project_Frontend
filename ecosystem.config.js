@@ -9,7 +9,10 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 443
+        PORT: 443,
+        HTTPS: "true",
+        SSL_CRT_FILE: "./cert.pem",
+        SSL_KEY_FILE: "./key.pem"
       }
     }]
   }

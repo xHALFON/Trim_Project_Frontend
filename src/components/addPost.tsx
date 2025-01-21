@@ -101,37 +101,45 @@ export default function AddPost({ setPosts }) {
       setLoading(false);
     }
   };
-
   return (
-    <div className="max-w-4xl mx-auto px-6">
-      <div className="text-left w-full ml-11 text-2xl font-bold text-gray-800 mb-2">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="pt-3 text-left w-full sm:ml-6 text-xl sm:text-2xl font-bold text-gray-800 mb-4">
         <p>Create a Post</p>
       </div>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="w-full flex p-4 border border-gray-400 rounded-full text-left px-16 mb-5 cursor-pointer bg-gray-100 hover:bg-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
-        <p className="font-bold text-xl flex-grow">Share your thoughts...</p>
-        <div className="text-white text-2xl">📝</div>
+        className="w-full mb-5 flex p-4 border border-gray-400 rounded-full text-left cursor-pointer bg-gray-100 hover:bg-gray-200 shadow-md hover:shadow-lg transition duration-300">
+        <p className="font-bold text-lg sm:text-xl flex-grow">Share your thoughts...</p>
+        <div className="text-white text-xl sm:text-2xl">📝</div>
       </div>
-
+  
       {isModalOpen && (
         <>
           <div
             className="fixed inset-0 bg-gray-500 bg-opacity-50 z-10"
-            onClick={() => setIsModalOpen(false)}></div>
+            onClick={() => setIsModalOpen(false)}
+          ></div>
           <div
             className="fixed inset-0 flex justify-center items-center z-20"
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <div
-              className="bg-white p-6 rounded-lg shadow-lg relative overflow-y-auto"
-              style={{ width: '500px', maxHeight: '90vh' }}>
+              className="bg-white p-4 sm:p-6 rounded-lg shadow-lg relative overflow-y-auto"
+              style={{ width: '90%', maxWidth: '500px', maxHeight: '90vh' }}
+            >
               <button
-                onClick={() => {setIsModalOpen(false); setError(''); setContent(''); setTitle('');}}
-                className="absolute top-2 right-6 text-gray-500 hover:text-gray-800">
-                <span className="text-5xl">&times;</span>
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setError('');
+                  setContent('');
+                  setTitle('');
+                }}
+                className="absolute top-2 right-6 text-gray-500 hover:text-gray-800"
+              >
+                <span className="text-4xl sm:text-5xl">&times;</span>
               </button>
-
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Create a Post</h2>
+  
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Create a Post</h2>
               <form onSubmit={handlePostSubmit}>
                 <div className="mb-4">
                   <input
@@ -139,15 +147,16 @@ export default function AddPost({ setPosts }) {
                     placeholder="Post Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                    className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div className="flex justify-between items-center mb-4">
                   <button
                     type="button"
                     onClick={handleGenerateText}
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                    disabled={generating}>
+                    className="bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-600"
+                    disabled={generating}
+                  >
                     {generating ? 'Generating...' : 'AI Generate Text'}
                   </button>
                 </div>
@@ -156,18 +165,18 @@ export default function AddPost({ setPosts }) {
                     placeholder="What's on your mind?"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                    className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     style={{ resize: 'none', maxHeight: '200px', minHeight: '200px' }}
                   />
                 </div>
-                <div className="mb-1">
+                <div className="mb-4">
                   <input
                     type="file"
                     onChange={handleImageUpload}
-                    className="border border-gray-300 px-2 rounded-md"
+                    className="border border-gray-300 px-2 sm:px-3 rounded-md"
                   />
                   {image && (
-                    <div className="mt-1 flex justify-center">
+                    <div className="mt-2 flex justify-center">
                       <img
                         src={URL.createObjectURL(image)}
                         alt="Uploaded"
@@ -177,12 +186,13 @@ export default function AddPost({ setPosts }) {
                     </div>
                   )}
                 </div>
-                {error && <p className="text-red-500 font-bold text-lg mt-3">{error}</p>}
+                {error && <p className="text-red-500 font-bold text-sm sm:text-lg mt-3">{error}</p>}
                 <div className="flex justify-end">
                   <button
                     type="submit"
-                    className="bg-blue-500 text-white px-6 py-2 mt-3 rounded-lg hover:bg-blue-600"
-                    disabled={loading}>
+                    className="bg-blue-500 text-white px-4 sm:px-6 py-2 sm:py-3 mt-3 rounded-lg hover:bg-blue-600"
+                    disabled={loading}
+                  >
                     {loading ? 'Posting...' : 'Post'}
                   </button>
                 </div>
@@ -192,5 +202,5 @@ export default function AddPost({ setPosts }) {
         </>
       )}
     </div>
-  );
+  );  
 }
