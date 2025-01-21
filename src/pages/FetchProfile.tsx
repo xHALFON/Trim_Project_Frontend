@@ -127,39 +127,59 @@ export default function FetchProfile({ setAuth, logout }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="flex justify-center pt-10 pb-16">
-        <div className="w-2/3  bg-white rounded-lg shadow-lg">
-          <div className="w-full h-48 flex items-center justify-center text-white text-2xl font-bold relative border-b border-gray-200"
-              style={{
-                  width: '100%',  // או רוחב קבוע
-                  height: '400px',  // גובה קבוע
-                  backgroundImage: `url(${profileImageTop})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat'
-                }}           
-              >
-          </div>
-          <div className="p-8 flex flex-row-reverse">
-            <div className="w-1/3 flex flex-col items-center relative">
-              <div className="w-48 h-48 mb-4 relative">
-                <img src={profileImage} alt="" className="w-full h-full object-cover rounded-full shadow-lg" />
+        <div className="w-11/12 lg:w-2/3 bg-white rounded-lg shadow-lg">
+          {/* תמונת רקע */}
+          <div
+            className="w-full flex items-center justify-center text-white text-2xl font-bold relative border-b border-gray-200"
+            style={{
+              width: '100%',
+              height: '400px',
+              backgroundImage: `url(${profileImageTop})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+          <div className="p-8 flex flex-col md:flex-row-reverse">
+            {/* צד שמאל */}
+            <div className="w-full md:w-1/3 flex flex-col items-center relative">
+              <div className="w-32 h-32 md:w-48 md:h-48 mb-4 relative">
+                <img
+                  src={profileImage}
+                  alt=""
+                  className="w-full h-full object-cover rounded-full shadow-lg"
+                />
               </div>
-              <h1 className="text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
-              <span className="mb-4">{profileGender == "male" ? <MaleIcon sx={{ color: 'blue', fontSize: 40 }} /> : profileGender == "female" ? <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} /> : ""}</span>
+              <h1 className="text-lg md:text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
+              <span className="mb-4">
+                {profileGender === 'male' ? (
+                  <MaleIcon sx={{ color: 'blue', fontSize: 40 }} />
+                ) : profileGender === 'female' ? (
+                  <FemaleIcon sx={{ color: '#ed007b', fontSize: 40 }} />
+                ) : (
+                  ''
+                )}
+              </span>
               <div>
-                <h2 className="text-lg font-semibold text-gray-700 mb-2">{profileStatus}</h2>
+                <h2 className="text-sm md:text-lg font-semibold text-gray-700 mb-2">
+                  {profileStatus}
+                </h2>
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <FetchUsersProfile />
               </div>
             </div>
+            {/* צד ימין */}
             <div className="w-full">
-                {userId ? <FetchPosts profile={true} userIdProp={userId} addPost={false}/> : <ClipLoader />}
+              {userId ? (
+                <FetchPosts profile={true} userIdProp={userId} addPost={false} />
+              ) : (
+                <ClipLoader />
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   );  
 }

@@ -191,7 +191,7 @@ export default function Profile({ setAuth, logout }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="flex justify-center pt-10 pb-16">
-        <div className="w-2/3 bg-white rounded-lg shadow-lg">
+        <div className="w-11/12 lg:w-2/3 bg-white rounded-lg shadow-lg">
           <div
             className="w-full h-48 flex items-center justify-center text-white text-2xl font-bold relative border-b border-gray-200"
             style={{
@@ -216,9 +216,9 @@ export default function Profile({ setAuth, logout }) {
               📷
             </button>
           </div>
-          <div className="p-8 flex flex-row-reverse">
-            <div className="w-1/3 flex flex-col items-center relative">
-              <div className="w-48 h-48 mb-4 relative">
+          <div className="p-8 flex flex-col lg:flex-row-reverse">
+            <div className="w-full lg:w-1/3 flex flex-col items-center relative mb-8 lg:mb-0">
+              <div className="w-32 h-32 lg:w-48 lg:h-48 mb-4 relative">
                 <img
                   src={profileImage}
                   alt=""
@@ -237,7 +237,9 @@ export default function Profile({ setAuth, logout }) {
                   📷
                 </button>
               </div>
-              <h1 className="text-xl font-bold text-gray-800 mb-4">{profileName}</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-gray-800 mb-4">
+                {profileName}
+              </h1>
               <span className="mb-4">
                 {profileGender === 'male' ? (
                   <MaleIcon sx={{ color: 'blue', fontSize: 40 }} />
@@ -247,22 +249,22 @@ export default function Profile({ setAuth, logout }) {
                   ''
                 )}
               </span>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-700 mb-2">{profileStatus}</h2>
-              </div>
+              <h2 className="text-sm lg:text-lg font-semibold text-gray-700 mb-2">
+                {profileStatus}
+              </h2>
               <button
-                className="mt-6 bg-blue-900 text-white px-10 py-2 rounded-lg shadow hover:bg-blue-950"
-                onClick={() => setModalOpen(true)} // פותח את המודאל
+                className="mt-4 lg:mt-6 bg-blue-900 text-white px-6 lg:px-10 py-2 rounded-lg shadow hover:bg-blue-950"
+                onClick={() => setModalOpen(true)}
               >
                 Edit Profile
               </button>
               <button
                 onClick={logout}
-                className="mt-6 bg-red-500 text-white px-10 py-2 rounded-lg shadow hover:bg-red-600"
+                className="mt-4 lg:mt-6 bg-red-500 text-white px-6 lg:px-10 py-2 rounded-lg shadow hover:bg-red-600"
               >
                 Log Out
               </button>
-              <div>
+              <div className="mt-6 hidden lg:block">
                 <FetchUsersProfile />
               </div>
             </div>
@@ -272,13 +274,12 @@ export default function Profile({ setAuth, logout }) {
           </div>
         </div>
       </div>
-
+  
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-
+          <div className="bg-white p-6 lg:p-8 rounded-lg w-11/12 lg:w-1/3">
+            <h2 className="text-lg lg:text-xl font-bold mb-4">Edit Profile</h2>
             {/* Profile Image */}
             <div className="w-48 h-48 mb-4 relative mx-auto">
               <img
@@ -340,7 +341,7 @@ export default function Profile({ setAuth, logout }) {
 
             <div className="flex justify-between">
               <button
-                onClick={() => {setModalOpen(false); setMessage(""); setNewName(profileName); setNewStatus(profileStatus); setNewGender(profileGender); setUpdateImageModal(null);}}
+                onClick={() => {setModalOpen(false); setMessage(""); setUpdateImage(''); setNewName(profileName); setNewStatus(profileStatus); setNewGender(profileGender); setUpdateImageModal(null);}}
                 className="bg-gray-300 text-black px-6 py-2 rounded-lg">
                 Cancel
               </button>
