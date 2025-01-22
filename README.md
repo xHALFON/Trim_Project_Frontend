@@ -16,12 +16,14 @@ REACT_APP_API_URL = ""
 ---
 ## Mobile View
 
-<img src="./src/assests/mobileScreen.jpg" alt="Company" title="Company" width="237" height="390">
-<img src="./src/assests/searchScreen.jpg" alt="Company" title="Company" width="237" height="390">
-<img src="./src/assests/settingsScreen.jpg" alt="Company" title="Company" width="237" height="390">
-<img src="./src/assests/loginScreen.jpg" alt="Company" title="Company" width="237" height="390">
-<img src="./src/assests/otherProfileScreen.jpg" alt="Company" title="Company" width="237" height="390">
-<img src="./src/assests/profileScreen.jpg" alt="Company" title="Company" width="237" height="390">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+  <img src="./src/assests/mobileScreen.jpg" alt="Company" title="Company" width="237" height="390">
+  <img src="./src/assests/searchScreen.jpg" alt="Company" title="Company" width="237" height="390">
+  <img src="./src/assests/settingsScreen.jpg" alt="Company" title="Company" width="237" height="390">
+  <img src="./src/assests/loginScreen.jpg" alt="Company" title="Company" width="237" height="390">
+  <img src="./src/assests/otherProfileScreen.jpg" alt="Company" title="Company" width="237" height="390">
+  <img src="./src/assests/profileScreen.jpg" alt="Company" title="Company" width="237" height="390">
+</div>
 
 ---
 
